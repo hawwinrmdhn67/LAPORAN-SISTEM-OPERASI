@@ -1,4 +1,4 @@
-﻿# LAPORAN LATIHAN SISTEM OPERASI
+# LAPORAN LATIHAN SISTEM OPERASI
 
 ## DOSEN PENGAMPU
 Dr. Ferry Astika Saputra, ST, M.Sc
@@ -12,7 +12,7 @@ MUCHAMMAD HAWWIN ROMADHON (3124521003)
 
 ---
 
-### 2. Konversikan bilangan desimal di bawah ini ke dalam bilangan biner 
+### 2. Konversikan bilangan desimal di bawah ini ke dalam bilangan biner
 
 **A. 1234₁₀**  
 1234 : 2 = 617 sisa 0  
@@ -40,86 +40,15 @@ Jadi, 1234 dalam biner adalah **10011010010₂**
 
 ---
 
-### 4. Konversikan bilangan biner ke bilangan oktal
-
-**A. 101011111001₂**  
-Kelompokkan per 3-bit dari belakang:  
-**101 011 111 001₂**  
-= **5371₈**
-
----
-
-### 5. Konversikan bilangan oktal ke bilangan biner
-
-**A. 2170₈**  
-2 = 010  
-1 = 001  
-7 = 111  
-0 = 000  
-
-Jadi, **2170₈ = 010001111000₂**
-
----
-
-### 6. Konversikan bilangan desimal ke heksadesimal
-
-**A. 1780₁₀**  
-1780 ÷ 16 = 111 sisa 4  
-111 ÷ 16 = 6 sisa 15 (F)  
-6 ÷ 16 = 0 sisa 6  
-
-Jadi, **1780₁₀ = 06F4₁₆**
-
----
-
-### 7. Konversikan bilangan heksadesimal ke desimal
-
-**A. ABCD₁₆**  
-= (10×16³) + (11×16²) + (12×16¹) + (13×16⁰)  
-= 40960 + 2816 + 192 + 13  
-= **43981₁₀**
-
----
-
-### 8. Konversikan bilangan pecahan desimal ke biner
-
-**A. 0.3125₁₀**  
-0.3125 × 2 = 0.625 → 0  
-0.625 × 2 = 1.25 → 1  
-0.25 × 2 = 0.5 → 0  
-0.5 × 2 = 1 → 1  
-
-Jadi, **0.3125₁₀ = 0.0101₂**
-
----
-
-### 9. Konversikan bilangan desimal ke biner
-
-**A. 11.625₁₀**  
-11 : 2 = 5 sisa 1 
-5 : 2 = 2 sisa 1 
-2 : 2 = 1 sisa 0 
-1 : 2 = 0 sisa 1 
-0,625 . 2 = 1 sisa 0,25 
-0,25 . 2 = 0 sisa 0,5 
-0,5 . 2 = 1 sisa 0 
-
----
-
-### 10. Konversikan bilangan desimal ke heksadesimal
-
-**A. 348.654₁₀**  
-348₁₀ = 15C₁₆  
-0.654₁₀ ≈ A76₁₆  
-
-Jadi, **348.654₁₀ = 15C.A76₁₆**
-
----
-
 ### 11. Konversikan bilangan biner ke desimal
 
 **A. 010100011.001111101₂**  
-165.46875₁₀
+= (0×2⁸) + (1×2⁷) + (0×2⁶) + (1×2⁵) + (0×2⁴) + (0×2³) + (0×2²) + (1×2¹) + (1×2⁰)  
+= 81.  
+= (0×2⁻¹) + (0×2⁻²) + (1×2⁻³) + (1×2⁻⁴) + (1×2⁻⁵) + (1×2⁻⁶) + (1×2⁻⁷) + (0×2⁻⁸)  
+= 0.46875  
+
+Jadi, **165.46875₁₀**
 
 ---
 
@@ -166,7 +95,8 @@ F0DE₁₆ → **1111 0000 1101 1110₂**
 
 ### 18. Konversikan bilangan biner negatif ke desimal
 
-**A. 10001000₂ → -120₁₀**
+**A. 10001000₂**  
+Menggunakan metode komplemen dua: **-120₁₀**
 
 ---
 
@@ -180,18 +110,3 @@ F0DE₁₆ → **1111 0000 1101 1110₂**
 
 **A. 'a' = 61₁₆**
 
----
-
-### 21. Interpretasi tampilan pada layar
-
-**PRINT X** → Representasi ASCII:  
-P (1010000)  
-R (1010010)  
-I (1001001)  
-N (1001110)  
-T (1010100)  
-X (1011000)
-
----
-
-**Selesai**
