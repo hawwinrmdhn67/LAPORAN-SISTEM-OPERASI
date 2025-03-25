@@ -175,3 +175,44 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
     7. Setelah ls selesai, proses anak keluar, lalu proses induk keluar → "I am a parent and I am quitting."
 
 ---    
+
+### fork06.c
+
+<img src="fork6.PNG" width="400">
+
+• Visualisasi Pohon Proses
+
+    pid: 4581, ppid: 3151
+    [Parent Process]
+       |
+       +--> fork() pertama membuat child process 1
+       |
+       +--> pid: 4582, ppid: 4581
+       |    [Child Process 1]
+       |       |
+       |       +--> fork() kedua membuat child process 2
+       |       |
+       |       +--> pid: 4583, ppid: 4582
+       |            [Child Process 2] (loop mencetak PID)
+       |
+       +--> Parent Process menunggu anaknya selesai
+
+• Deskripsi
+
+    1. Proses utama (pid: 4581) pertama kali dijalankan.
+    
+    2. fork() pertama membuat proses anak (pid: 4582).
+    
+    3. Proses induk mencetak PID anaknya → "My child has pid = 4582"
+    
+    4.Proses anak (pid: 4582) mencetak PID dirinya sendiri → "I am a child and my pid = 4582"
+    
+    5. Proses anak (pid: 4582) menjalankan fork() lagi, membuat proses anak kedua (pid: 4583).
+    
+    6. Proses anak kedua (pid: 4583) masuk dalam loop mencetak PID.
+    
+    7. Proses induk (pid: 4581) menunggu semua anak selesai (wait()) lalu mencetak → "I am a parent and I am quitting."
+
+---
+
+SELESAI
