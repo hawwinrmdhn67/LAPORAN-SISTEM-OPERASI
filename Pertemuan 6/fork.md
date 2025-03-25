@@ -23,3 +23,19 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 <img src="fork.PNG" width="600">
     
+---
+
+• Deskripsikan dan visualisasikan pohon proses hasil eksekusi dari kode program 
+
+    fork01.c, fork02.c, fork03.c, fork04.c, fork05.c dan fork06.c.
+
+---
+
+### fork01.c    
+
+• Visualisasi Pohon Proses
+
+  Karena tidak ada fork(), hanya ada satu proses tunggal
+
+    pid: 2308, ppid: 10
+    [Main process]
