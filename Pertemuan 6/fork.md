@@ -86,6 +86,8 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ### fork03.c
 
+<img src="fork3.PNG" width="400">
+
 • Visualisasi Pohon Proses
 
     pid: 4375, ppid: 3151
@@ -107,5 +109,37 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
     4. Karena sistem multitasking, urutan eksekusi tidak selalu teratur, sehingga output terlihat bergantian antara dua     
     
     proses.
+
+---    
+
+### fork04.c
+
+<img src="fork4.PNG" width="400">
+
+• Visualisasi Pohon Proses
+
+    pid: 4495, ppid: 3151
+    [Parent Process]
+       |
+       +--> fork() membuat child process
+       |
+       +--> pid: 4496, ppid: 4495
+            [Child Process]
+
+• Deskripsi
+
+    1. Proses utama (pid: 4495) pertama kali dijalankan.
+    
+    2. fork() membuat proses anak (pid: 4496).
+    
+    3. Proses induk mencetak PID anaknya → "My child has pid = 4496"
+    
+    4. Proses anak mencetak PID induknya → "My parent is 4495"
+    
+    5. Proses induk menunggu anaknya selesai dengan wait() → "I am a parent and I am going to wait for my child"
+    
+    6. Proses anak menyelesaikan tugasnya dan keluar → "I am a child and I am quitting work now!"
+    
+    7. Setelah anak keluar, induk juga keluar → "I am a parent and I am quitting."
 
 ---    
