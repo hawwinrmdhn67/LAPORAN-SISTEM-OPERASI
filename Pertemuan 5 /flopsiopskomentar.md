@@ -31,7 +31,7 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ---
     
-    $ ./flops64 $ (nproc)
+    $ ./iops64 $ (nproc)
 
   <img src="flopsiops2.PNG" width="400">
 
@@ -47,7 +47,7 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ---
 
-    $ ./iops64 $ (nproc)
+    $ ./flops64 $ (nproc)
 
    <img src="flopsiops3.PNG" width="400">
 
