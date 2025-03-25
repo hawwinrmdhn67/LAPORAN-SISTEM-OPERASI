@@ -54,6 +54,8 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ### fork02.c
 
+<img src="fork2.PNG" width="400">
+
 • Visualisasi Pohon Proses
 
     pid: 4345, ppid: 3151
@@ -66,16 +68,44 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 • Deskripsi
 
-    1.Proses utama (pid: 4345) dijalankan pertama kali.
+    1. Proses utama (pid: 4345) dijalankan pertama kali.
     
-    2.fork() dipanggil, yang menyebabkan sistem menciptakan proses anak (pid: 4346).
+    2. fork() dipanggil, yang menyebabkan sistem menciptakan proses anak (pid: 4346).
     
-    3.Kedua proses (induk & anak) memiliki variabel x, tetapi nilainya tidak dibagikan karena proses berjalan di memori  
+    3. Kedua proses (induk & anak) memiliki variabel x, tetapi nilainya tidak dibagikan karena proses berjalan di memori  
     
     terpisah.
     
-    4.Kedua proses menjalankan loop while (1), sehingga mereka terus mencetak PID dan nilai x masing-masing.
+    4. Kedua proses menjalankan loop while (1), sehingga mereka terus mencetak PID dan nilai x masing-masing.
     
-    5.Terlihat dua PID berbeda (4345 dan 4346) yang mencetak angka yang sama secara bergantian, karena mereka berjalan
+    5. Terlihat dua PID berbeda (4345 dan 4346) yang mencetak angka yang sama secara bergantian, karena mereka berjalan
     
     bersamaan.
+
+---
+
+### fork03.c
+
+• Visualisasi Pohon Proses
+
+    pid: 4375, ppid: 3151
+    [Parent Process]
+       |
+       +--> fork() memunculkan child process
+       |
+       +--> pid: 4376, ppid: 4375
+            [Child Process]
+
+• Deskripsi
+
+    1. Proses utama (pid: 4375) pertama kali dijalankan.
+    
+    2. fork() membuat proses anak (pid: 4376).
+    
+    3. Kedua proses menjalankan perulangan dan mencetak "This is process 4375" dan "This is process 4376" secara bergantian.
+    
+    4. Karena sistem multitasking, urutan eksekusi tidak selalu teratur, sehingga output terlihat bergantian antara dua     
+    
+    proses.
+
+---    
