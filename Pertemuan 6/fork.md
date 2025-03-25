@@ -143,3 +143,35 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
     7. Setelah anak keluar, induk juga keluar → "I am a parent and I am quitting."
 
 ---    
+
+### fork05.c
+
+<img src="fork5.PNG" width="400">
+
+• Visualisasi Pohon Proses
+
+    pid: 4509, ppid: 3151
+    [Parent Process]
+       |
+       +--> fork() membuat child process
+       |
+       +--> pid: 4510, ppid: 4509
+            [Child Process] (menjalankan `ls`)
+
+• Deskripsi
+    
+    1. Proses utama (pid: 4509) pertama kali dijalankan.
+    
+    2. fork() membuat proses anak (pid: 4510).
+    
+    3. Proses induk mencetak PID anaknya → "My child has pid = 4510"
+    
+    4. Proses anak mencetak PID induknya → "I am a child and my pid = 4510"
+    
+    5. Proses anak menjalankan perintah sistem ls → Menampilkan daftar file/folder di direktori
+    
+    6. Proses induk menggunakan wait() untuk menunggu anak selesai → "I am a parent and I am going to wait for my child"
+    
+    7. Setelah ls selesai, proses anak keluar, lalu proses induk keluar → "I am a parent and I am quitting."
+
+---    
