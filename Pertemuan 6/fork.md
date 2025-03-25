@@ -33,9 +33,49 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ### fork01.c    
 
+<img src="fork1.PNG" width="400">
+
 • Visualisasi Pohon Proses
 
-  Karena tidak ada fork(), hanya ada satu proses tunggal
-
-    pid: 2308, ppid: 10
+    pid: 3574, ppid: 3151
     [Main process]
+
+• Deskripsi
+
+    1. PID 3574 → Ini adalah process ID (PID) dari program yang sedang berjalan.
+    
+    2. PPID 3151 → Ini adalah parent process ID (PPID), yang kemungkinan adalah terminal atau shell yang menjalankan program.
+    
+    3. User ID (UID) 1000 → Ini adalah ID pengguna yang menjalankan proses.
+
+    4. Proses utama mencetak informasi sebanyak 3 kali karena ada loop for (int i = 0; i < 3; i++).
+
+---
+
+### fork02.c
+
+• Visualisasi Pohon Proses
+
+    pid: 4345, ppid: 3151
+    [Parent Process]
+       |
+       +--> fork() memunculkan child process
+       |
+       +--> pid: 4346, ppid: 4345
+            [Child Process]
+
+• Deskripsi
+
+    1.Proses utama (pid: 4345) dijalankan pertama kali.
+    
+    2.fork() dipanggil, yang menyebabkan sistem menciptakan proses anak (pid: 4346).
+    
+    3.Kedua proses (induk & anak) memiliki variabel x, tetapi nilainya tidak dibagikan karena proses berjalan di memori  
+    
+    terpisah.
+    
+    4.Kedua proses menjalankan loop while (1), sehingga mereka terus mencetak PID dan nilai x masing-masing.
+    
+    5.Terlihat dua PID berbeda (4345 dan 4346) yang mencetak angka yang sama secara bergantian, karena mereka berjalan
+    
+    bersamaan.
