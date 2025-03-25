@@ -53,20 +53,20 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
     Komentar dari saya :
 
-    1.	Tr 1: 1285995230 & Tr 2: 1231329814 Menunjukkan jumlah operasi floating point 64bit yang dihitung dalam dua tahap pengujian
+    1. Tr 1: 1285995230 & Tr 2: 1231329814 Menunjukkan jumlah operasi floating point 64bit yang dihitung dalam dua tahap pengujian
 
-    2.	FLOPS = 2517325044 Total jumlah operasi floating point 64bit yang dilakukan per detik 2.51 milyar operasi per detik (2.51 GigaFLOPS)
+    2. FLOPS = 2517325044 Total jumlah operasi floating point 64bit yang dilakukan per detik 2.51 milyar operasi per detik (2.51 GigaFLOPS)
 
-    3.	Maximum CPU Throughput: 2.517325 Gigaflops kapasitas maksimum CPU dalam menangani operasi floating point 64bit secara keseluruhan menggunakan semua core yang tersedia
+    3. Maximum CPU Throughput: 2.517325 Gigaflops kapasitas maksimum CPU dalam menangani operasi floating point 64bit secara keseluruhan menggunakan semua core yang tersedia
 
-    4.	Maximum Single Core Throughput: 1.285995 Gigaflops. kapasitas maksimum satu core CPU dalam menangani operasi floating point 64bit
+    4. Maximum Single Core Throughput: 1.285995 Gigaflops. kapasitas maksimum satu core CPU dalam menangani operasi floating point 64bit
 
 ---
 
 ### KESIMPULAN
 
-    •	IOPS lebih cepat daripada FLOPS
-    •	Performa multi core cukup seimbang tidak beda jauh
+    • IOPS lebih cepat daripada FLOPS
+    • Performa multi core cukup seimbang tidak beda jauh
 
 ---
 
