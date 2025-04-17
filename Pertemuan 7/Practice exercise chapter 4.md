@@ -248,3 +248,49 @@ Using Amdahl's Law, calculate the speedup gain for the following applications:
 90 percent parallel with (a) four processing cores and (b) eight processing cores
 
 Jawaban :
+    
+Rumus Amdahl :
+
+<img src="pngegg.png" width="240">
+
+    Perhitungan Speedup Menggunakan Hukum Amdahl
+    
+    Hasil Perhitungan
+    
+    1. Aplikasi 40% Paralel (P = 0.4)
+    Core (N)	Perhitungan	Speedup
+    8	1 / (0.6 + 0.4/8)	≈1.54x
+    16	1 / (0.6 + 0.4/16)	≈1.60x
+    
+    Analisis:
+    Speedup terbatas karena 60% kode serial. Penambahan core dari 8→16 hanya memberi peningkatan 0.06x.
+    
+    3. Aplikasi 67% Paralel (P = 0.67)
+    Core (N)	Perhitungan	Speedup
+    2	1 / (0.33 + 0.67/2)	≈1.50x
+    4	1 / (0.33 + 0.67/4)	≈2.01x
+    
+    Analisis:
+    Peningkatan signifikan (1.5x→2x) karena bagian paralel lebih dominan.
+    
+    4. Aplikasi 90% Paralel (P = 0.9)
+    Core (N)	Perhitungan	Speedup
+    4	1 / (0.1 + 0.9/4)	≈3.08x
+    8	1 / (0.1 + 0.9/8)	≈4.71x
+    
+    Analisis:
+    Scaling hampir linear karena hanya 10% kode serial
+
+    Jadi :
+    
+    Speedup maksimum teoritis: 1/(1-P)    
+    40% paralel: Maks 1.67x
+    90% paralel: Maks 10x
+    
+    Efektivitas bergantung pada:
+    Rasio kode paralel (P)
+    Overhead paralelisasi
+    
+    Untuk P ≥80%, penambahan core memberi dampak signifikan
+    
+---
