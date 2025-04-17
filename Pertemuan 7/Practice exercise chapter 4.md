@@ -71,9 +71,8 @@ Does the multithreaded web server described in Section 4.1 exhibit task or data 
 
 Jawaban : 
 
-    Task Parallelism (Paralelisme Tugas), karena setiap thread menangani task yang berbeda (misal: thread 1 untuk HTTP request, thread 2 untuk
-    
-    database query)
+    Task Parallelism (Paralelisme Tugas), karena setiap thread menangani task yang berbeda 
+    (misal: thread 1 untuk HTTP request, thread 2 untuk database query)
 
 ---
 
@@ -251,7 +250,7 @@ Jawaban :
     
 Rumus Amdahl :
 
-<img src="pngegg.png" width="240">
+<img src="rumus amdahl.png" width="500">
 
     Perhitungan Speedup Menggunakan Hukum Amdahl
     
@@ -294,3 +293,86 @@ Rumus Amdahl :
     Untuk P ≥80%, penambahan core memberi dampak signifikan
     
 ---
+
+• 4.15
+
+Determine if the following problems exhibit task or data parallelism:
+
+• Using a separate thread to generate a thumbnail for each photo in a collection
+
+• Transposing a matrix in parallel
+
+• A networked application where one thread reads from the network and another writes to the network
+
+• The fork-join array summation application described in Section 4.5.2
+
+• The Grand Central Dispatch system
+
+Jawaban : 
+
+    1. Membuat thumbnail untuk setiap foto dalam koleksi
+    
+        • Data Parallelism
+        
+        • Alasan: Operasi yang sama (pembuatan thumbnail) diterapkan pada data berbeda (setiap foto).
+    
+    2.  Transpos matriks secara paralel
+    
+        • Data Parallelism
+        
+        • Alasan: Elemen matriks diproses secara terdistribusi (misal: tiap thread mengolah bagian matriks berbeda).
+    
+    3. Aplikasi jaringan dengan thread baca/tulis terpisah
+    
+        • Task Parallelism
+        
+        • Alasan: Thread membaca dan menulis menjalankan task berbeda dengan tujuan berbeda.
+    
+    4. Fork-join array summation
+    
+        • Data Parallelism
+        
+        • Alasan: Array dibagi menjadi bagian-bagian yang dijumlahkan secara paralel.
+        
+    5. Grand Central Dispatch (GCD) system
+    
+        • Task Parallelism
+        
+        • Alasan: GCD mengelola eksekusi task berbeda (bukan data) secara konkuren.    
+
+---
+
+• 4.16
+
+A system with two dual-core processors has four processors available for scheduling. A CPU-intensive application is running on this system. All input is performed at program start-up, when a single file must be opened. Similarly, all output is performed just before the program terminates, when the program results must be written to a single file. Between start-up and termination, the program is entirely CPU-bound. Your task is to improve the performance of this application by multithreading it. The application runs on a system that uses the one-to-one threading model (each user thread maps to a kernel thread).
+
+How many threads will you create to perform the input and output? Explain.
+
+How many threads will you create for the CPU-intensive portion of the application? Explain.
+
+Jawaban : 
+
+    • Input/Output (I/O)
+      Jumlah thread: 1 thread untuk input dan 1 untuk output
+    
+      Penjelasan:
+    
+        • I/O bersifat sequential (membuka/menulis file tunggal)
+        
+        • Multithreading tidak mempercepat akses ke file tunggal
+        
+        • Pembatasan thread menghindari resource contention
+    
+    • Bagian CPU-Intensif
+      Jumlah thread: 4 thread
+    
+      Penjelasan:
+    
+        • Sistem memiliki 4 core fisik (2 prosesor dual-core)
+        
+        • Model one-to-one memastikan tiap thread user mendapat core dedicated
+        
+        • Lebih dari 4 thread akan menyebabkan overhead context switching
+
+---
+
