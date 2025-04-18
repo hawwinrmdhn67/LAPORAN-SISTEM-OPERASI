@@ -376,3 +376,473 @@ Jawaban :
 
 ---
 
+• 4.17
+
+Consider the following code segment:
+
+    pid_t pid;
+    pid = fork();
+    if (pid == 0) { /* child process */
+        fork();
+        thread.create( . . .);
+    }
+    fork();
+
+a. How many unique processes are created?
+
+b. How many unique threads are created?
+
+Jawaban :
+
+    a. How many unique processes are created?
+    
+    Penjelasan :
+    
+    • Fork 1 membuat 1 proses anak (total proses sekarang: 2).
+    
+    • Hanya proses anak (pid == 0) yang menjalankan Fork 2, menghasilkan 1 proses tambahan (total: 3).
+    
+    • Fork 3 dijalankan oleh semua proses yang ada (3 proses), sehingga masing-masing membuat 1 proses baru (total akhir: 3 + 3 = 6).
+    
+      • Namun, proses "utama" (parent awal) sudah dihitung, jadi proses unik yang baru dibuat adalah 5 (6 total dikurangi parent awal).
+
+    b. How many unique threads are created?
+    
+    Penjelasan :
+    
+    • thread_create() hanya dipanggil oleh proses anak hasil Fork 1 (setelah Fork 2).
+
+    • Hanya 1 thread yang dibuat, dan thread ini berbagi alamat memori dengan proses anak tersebut.
+
+---
+
+• 4.18
+
+As described in Section 4.7.2, Linux does not distinguish between processes and threads. Instead, Linux treats both in the same way, allowing a task to be more akin to a process or a thread depending on the set of flags passed to the clone() system call. However, other operating systems, such as Windows, treat processes and threads differently. Typically, such systems use a notation in which the data structure for a process contains pointers to the separate threads belonging to the process. Contrast these two approaches for modeling processes and threads within the kernel.
+
+Jawaban : 
+
+| **Fitur**               | **Linux (`clone()`)**                              | **Windows (Proses/Thread Terpisah)**          |
+|-------------------------|---------------------------------------------------|---------------------------------------------|
+| **Representasi Kernel** | Satu `task_struct` untuk keduanya                 | `EPROCESS` (proses) + `ETHREAD` (thread)    |
+| **System Call Pembuatan**| `clone()` dengan flag (misal `CLONE_VM` untuk thread)| `CreateProcess()` (proses) + `CreateThread()` |
+| **Berbagi Sumber Daya** | Fleksibel (memori, FD, dll. berdasarkan flag)     | Thread berbagi memori proses; proses terisolasi |
+| **Overhead**            | Rendah (tidak ada struktur tambahan)              | Lebih tinggi (pemisahan eksplisit)          |
+| **Contoh Penggunaan**   | Container Docker (proses ringan)                  | Aplikasi multithreaded (misal Chrome)       |
+
+---
+
+• 4.19
+
+The program shown in Figure 4.23 uses the Pthreads API. What would be the output from the program at LINE C and LINE P?
+
+Jawaban :
+
+    #include <pthread.h>
+    #include <stdio.h>
+    
+    int value = 0;
+    void *runner(void *param); /* the thread */
+    
+    int main(int argc, char *argv[]) {
+        pid_t pid;
+        pthread_t tid;
+        pthread_attr_t attr;
+    
+        pid = fork();
+    
+        if (pid == 0) { /* child process */
+            pthread_attr_init(&attr);
+            pthread_create(&tid, &attr, runner, NULL);
+            pthread_join(tid, NULL);
+            printf("CHILD: value = %d", value); /* LINE C */
+        }
+        else if (pid > 0) { /* parent process */
+            wait(NULL);
+            printf("PARENT: value = %d", value); /* LINE P */
+        }
+    }
+    
+    void *runner(void *param) {
+        value = 5;
+        pthread_exit(0);
+    }
+
+Outputnya :
+
+CHILD: value = 5
+
+PARENT: value = 0
+
+---
+
+• 4.20
+
+Consider a multicore system and a multithreaded program using the many-to-many threading model, where the number of user-level threads exceeds the number of processing cores. Discuss the performance implications of:
+
+a. The number of kernel threads is less than the number of cores.
+
+b. The number of kernel threads equals the number of cores.
+
+c. The number of kernel threads is greater than the number of cores but less than user-level threads.
+
+Jawaban :
+
+    a. Jumlah Thread Kernel < Jumlah Core
+    
+    Contoh :
+    • 8 core
+    • 4 thread kernel
+    • 100 thread user
+    
+    Implikasi :
+    • Pemanfaatan core tidak maksimal.
+    • Hanya 4 ULT yang dapat berjalan sekaligus, meskipun ada 8 core.
+    • Sebagian core akan idle, menyebabkan pemborosan sumber daya.
+    • Banyak ULT harus menunggu KLT tersedia, meningkatkan latensi.
+    
+    Dampak Performa :
+    • Efisiensi rendah
+    • Throughput kecil
+    • Tingkat responsivitas buruk
+    • Potensi starvation (kelaparan thread)
+    
+    b. Jumlah Thread Kernel = Jumlah Core
+    
+    Contoh :
+    • 8 core
+    • 8 thread kernel
+    • 100 thread user
+    
+    Implikasi :
+    • Pemanfaatan core optimal — semua core dapat menjalankan 1 KLT.
+    • ULT dapat dijadwalkan secara bergantian tanpa menghambat core.
+    • Sistem dapat mengelola eksekusi ULT dengan efisien.
+    
+    Dampak Performa :
+    • Efisiensi tinggi
+    • Throughput maksimal
+    • Responsivitas baik
+    • Beban sistem stabil
+    
+    c. Jumlah Thread Kernel > Jumlah Core tapi < Jumlah Thread User
+    
+    Contoh :
+    • 8 core
+    • 12 thread kernel
+    • 100 thread user
+    
+    Implikasi :
+    • Lebih banyak ULT bisa dijalankan secara paralel, meskipun hanya 8 yang bisa aktif sekaligus.
+    • Kernel perlu melakukan context switching antar KLT, menyebabkan overhead kecil.
+    • Namun sistem lebih fleksibel dibanding skenario (a).
+    
+    Dampak Performa :
+    • Efisiensi masih baik
+    • Overhead switching meningkat, tapi masih dalam batas wajar
+    • Responsivitas lebih baik dari (a), meski tidak seoptimal (b)
+    
+    | Kondisi | Efisiensi CPU | Throughput | Responsivitas |
+    |--------|----------------|-------------|----------------|
+    | a. KLT < Core | Rendah | Rendah | Buruk |
+    | b. KLT = Core | Optimal | Tinggi | Baik |
+    | c. KLT > Core tapi < ULT | Menengah-Tinggi | Cukup Baik | Lebih Baik dari (a) 
+    
+    Semakin besar jumlah user-level threads, semakin penting manajemen thread pool dan strategi load balancing untuk menjaga performa sistem tetap stabil.
+
+---
+
+• 4.21
+
+Pthreads provides an API for managing thread cancellation. The pthread_setcancelstate() function is used to set the cancellation state. Its prototype appears as follows
+
+    pthread_setcancelstate(int state, int *oldstate);
+
+The two possible values for the state are:
+
+• PTHREAD_CANCEL_ENABLE
+
+• PTHREAD_CANCEL_DISABLE
+
+Using the code segment shown in Figure 4.24, provide examples of two operations that would be suitable to perform between the calls to disable and enable thread cancellation.
+
+    int oldstate;
+    pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+    /* What operations would be performed here? */
+    pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
+
+Jawaban :
+
+Manajemen Pembatalan Thread dengan `pthread_setcancelstate()`
+
+Pthreads menyediakan API untuk mengatur pembatalan thread (thread cancellation), salah satunya melalui fungsi:
+
+    int pthread_setcancelstate(int state, int *oldstate);
+
+Parameter state dapat bernilai:
+
+• PTHREAD_CANCEL_ENABLE : mengaktifkan pembatalan thread
+
+• PTHREAD_CANCEL_DISABLE : menonaktifkan pembatalan thread sementara
+
+Contoh Operasi yang Cocok Saat Pembatalan Dinonaktifkan
+
+• PTHREAD_CANCEL_DISABLE
+
+    pthread_mutex_lock(&mutex);
+    shared_counter += 1;
+    pthread_mutex_unlock(&mutex);
+
+- Jika thread dibatalkan saat memodifikasi data bersama, dapat menyebabkan data race atau inkonsistensi data.
+
+- Menonaktifkan pembatalan mencegah thread keluar sebelum menyelesaikan modifikasi dengan aman.
+
+• PTHREAD_CANCEL_ENABLE
+
+    char *buffer = malloc(1024);
+    if (buffer != NULL) {
+        memset(buffer, 0, 1024);
+        // Lanjutkan penggunaan buffer...
+    }
+
+- Jika thread dibatalkan setelah malloc() tapi sebelum free(), akan terjadi memory leak.
+
+- Pembatalan harus dinonaktifkan selama manajemen memori.
+
+---
+
+• 4.22
+
+Write a multithreaded program that calculates various statistical values for a list of numbers. This program will be passed a series of numbers on the command line and will then create three separate worker threads. One thread will determine the average of the numbers, the second will determine the maximum value, and the third will determine the minimum value. For example, suppose your program is passed the integers
+
+The program will report
+
+- The average value is 82
+
+- The minimum value is 72
+
+- The maximum value is 95
+
+The variables representing the average, minimum, and maximum values will be stored globally. The worker threads will set these values, and the parent thread will output the values once the workers have exited. (We could obviously expand this program by creating additional threads that determine other statistical values, such as median and standard deviation.)
+
+Jawaban : 
+
+Program Multithread untuk Menghitung Statistik
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <pthread.h>
+    
+    // Variabel global untuk menyimpan hasil
+    double average = 0;
+    int minimum = 0;
+    int maximum = 0;
+    
+    // Struktur untuk passing data ke thread
+    typedef struct {
+        int *numbers;
+        int count;
+    } ThreadData;
+    
+    // Fungsi untuk menghitung rata-rata
+    void *calculate_average(void *arg) {
+        ThreadData *data = (ThreadData *)arg;
+        int sum = 0;
+        for (int i = 0; i < data->count; i++) {
+            sum += data->numbers[i];
+        }
+        average = (double)sum / data->count;
+        pthread_exit(NULL);
+    }
+    
+    // Fungsi untuk mencari nilai minimum
+    void *calculate_minimum(void *arg) {
+        ThreadData *data = (ThreadData *)arg;
+        minimum = data->numbers[0];
+        for (int i = 1; i < data->count; i++) {
+            if (data->numbers[i] < minimum) {
+                minimum = data->numbers[i];
+            }
+        }
+        pthread_exit(NULL);
+    }
+    
+    // Fungsi untuk mencari nilai maksimum
+    void *calculate_maximum(void *arg) {
+        ThreadData *data = (ThreadData *)arg;
+        maximum = data->numbers[0];
+        for (int i = 1; i < data->count; i++) {
+            if (data->numbers[i] > maximum) {
+                maximum = data->numbers[i];
+            }
+        }
+        pthread_exit(NULL);
+    }
+    
+    int main(int argc, char *argv[]) {
+        if (argc < 2) {
+            printf("Usage: %s <number1> <number2> ... <numberN>\n", argv[0]);
+            return 1;
+        }
+    
+        int *numbers = malloc((argc - 1) * sizeof(int));
+        for (int i = 1; i < argc; i++) {
+            numbers[i - 1] = atoi(argv[i]);
+        }
+    
+        ThreadData data = {numbers, argc - 1};
+    
+        // Buat thread untuk masing-masing tugas
+        pthread_t threads[3];
+        pthread_create(&threads[0], NULL, calculate_average, &data);
+        pthread_create(&threads[1], NULL, calculate_minimum, &data);
+        pthread_create(&threads[2], NULL, calculate_maximum, &data);
+    
+        // Tunggu semua thread selesai
+        for (int i = 0; i < 3; i++) {
+            pthread_join(threads[i], NULL);
+        }
+    
+        // Cetak hasil
+        printf("The average value is %.0f\n", average);
+        printf("The minimum value is %d\n", minimum);
+        printf("The maximum value is %d\n", maximum);
+    
+        free(numbers);
+        return 0;
+    }
+Penjelasan :
+
+Variabel Global:
+
+- average, minimum, maximum menyimpan hasil perhitungan.
+
+Struktur ThreadData:
+
+- Menyimpan pointer ke array angka (numbers) dan jumlah elemen (count).
+
+Fungsi Thread:
+
+- calculate_average: Menghitung rata-rata.
+
+- calculate_minimum: Mencari nilai terkecil.
+
+- calculate_maximum: Mencari nilai terbesar.
+
+Main Program:
+
+- Parsing input dari command line.
+
+- Membuat 3 thread terpisah untuk masing-masing perhitungan.
+
+- Menunggu thread selesai dengan pthread_join.
+
+- Mencetak hasil dan membersihkan memori
+
+• Thread Safety: Variabel global diakses secara eksklusif oleh masing-masing thread (tidak ada race condition).
+
+• Extensibility: Program bisa dikembangkan untuk menghitung statistik lain (median, standar deviasi) dengan menambah thread baru.
+
+---
+
+• 4.23
+
+Write a multithreaded program that outputs prime numbers. This program should work as follows: The user will run the program and will enter a number on the command line. The program will then create a separate thread that outputs all the prime numbers less than or equal to the number entered by the user.
+
+Jawaban :
+
+Program Multithread untuk Mencetak Bilangan Prima
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <pthread.h>
+    #include <stdbool.h>
+    
+    // Fungsi untuk mengecek apakah suatu bilangan prima
+    bool is_prime(int num) {
+        if (num <= 1) return false;
+        if (num == 2) return true;
+        if (num % 2 == 0) return false;
+        
+        for (int i = 3; i * i <= num; i += 2) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    // Fungsi yang dijalankan oleh thread untuk mencetak bilangan prima
+    void *print_primes(void *arg) {
+        int limit = *((int *)arg);
+        printf("Bilangan prima <= %d:\n", limit);
+        
+        for (int i = 2; i <= limit; i++) {
+            if (is_prime(i)) {
+                printf("%d ", i);
+            }
+        }
+        printf("\n");
+        
+        pthread_exit(NULL);
+    }
+    
+    int main(int argc, char *argv[]) {
+        if (argc != 2) {
+            printf("Usage: %s <angka>\n", argv[0]);
+            return 1;
+        }
+    
+        int limit = atoi(argv[1]);
+        if (limit < 2) {
+            printf("Masukkan angka >= 2\n");
+            return 1;
+        }
+    
+        pthread_t prime_thread;
+        pthread_create(&prime_thread, NULL, print_primes, &limit);
+        pthread_join(prime_thread, NULL);
+    
+        return 0;
+    }
+
+Penjelasan :
+
+Fungsi is_prime():
+
+- Mengecek apakah suatu bilangan prima dengan:
+
+- Bilangan ≤ 1 bukan prima
+
+- Bilangan 2 adalah prima
+
+- Bilangan genap > 2 bukan prima
+
+- Pengecekan pembagi hingga √num untuk efisiensi
+
+- Fungsi Thread print_primes():
+
+- Menerima argumen limit (batas atas)
+
+- Mencetak semua bilangan prima dari 2 hingga limit
+
+Main Program:
+
+- Validasi input (harus 1 angka ≥ 2)
+
+- Membuat thread khusus untuk mencetak bilangan prima
+
+- Menunggu thread selesai dengan pthread_join()
+
+---
+
+• 4.24
+
+An interesting way of calculating π is to use a technique known as Monte Carlo, which involves randomization. This technique works as follows:
+Suppose you have a circle inscribed within a square, as shown in Figure 4. Assume that the radius of this circle is 1/3.
+
+First, generate a series of random points as simple (x,y) coordinates. These points must fall within the Cartesian coordinates that bound the square. Of the total number of random points that are generated, some will occur within the circle.
+
+Next, estimate π by performing the following calculation:
+
+<img src="monte carlo.png" width="240">
