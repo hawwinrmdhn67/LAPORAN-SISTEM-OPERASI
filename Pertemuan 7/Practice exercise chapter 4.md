@@ -849,3 +849,196 @@ Next, estimate π by performing the following calculation:
 
 Write a multithreaded version of this algorithm that creates a separate thread to generate a number of random points. The thread will count the number of points that occur within the circle and store that result in a global variable. When this thread has exited, the parent thread will calculate and output the estimated value of π. It is worth experimenting with the number of random points generated. As a general rule, the greater the number of points, the closer the approximation to π.
 
+<img src="monte carlo calculating.png" width="400">
+
+In the source-code download for this text, you will find a sample program that provides a technique for generating random numbers, as well as determining if the random (x,y) point occurs within the circle.
+
+Readers interested in the details of the Monte Carlo method for estimating π should consult the bibliography at the end of this chapter. In Chapter 6, we modify this exercise using relevant material from that chapter.
+
+Jawaban :
+
+Program Multithread untuk Menghitung π dengan Metode Monte Carlo
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <pthread.h>
+    #include <time.h>
+    #include <math.h>
+    
+    #define RADIUS (1.0/3.0)  // Jari-jari lingkaran = 1/3
+    
+    int total_points = 0;      // Jumlah total titik
+    int points_in_circle = 0;  // Jumlah titik dalam lingkaran (global variable)
+    
+    // Fungsi thread untuk menghasilkan titik acak
+    void *generate_points(void *arg) {
+        int n = *((int *)arg);
+        unsigned int seed = time(NULL) ^ pthread_self(); // Seed unik untuk tiap thread
+        
+        for (int i = 0; i < n; i++) {
+            double x = (double)rand_r(&seed) / RAND_MAX * 2 * RADIUS - RADIUS;
+            double y = (double)rand_r(&seed) / RAND_MAX * 2 * RADIUS - RADIUS;
+            
+            // Cek apakah titik berada dalam lingkaran (x² + y² ≤ r²)
+            if (x*x + y*y <= RADIUS*RADIUS) {
+                points_in_circle++;
+            }
+        }
+        pthread_exit(NULL);
+    }
+    
+    int main(int argc, char *argv[]) {
+        if (argc != 2) {
+            printf("Usage: %s <jumlah_titik>\n", argv[0]);
+            return 1;
+        }
+    
+        total_points = atoi(argv[1]);
+        if (total_points <= 0) {
+            printf("Jumlah titik harus > 0\n");
+            return 1;
+        }
+    
+        pthread_t monte_carlo_thread;
+        pthread_create(&monte_carlo_thread, NULL, generate_points, &total_points);
+        pthread_join(monte_carlo_thread, NULL);
+    
+        // Hitung estimasi π
+        double pi_estimate = 6.0 * points_in_circle / total_points;
+        printf("Estimasi π = %f (dengan %d titik)\n", pi_estimate, total_points);
+    
+        return 0;
+    }
+
+Penjelasan :
+
+Thread Utama (main)
+
+- Membaca jumlah titik dari input command line
+
+- Membuat thread pekerja (monte_carlo_thread) untuk memproses titik
+
+- Menunggu thread selesai (pthread_join)
+
+- Menghitung dan mencetak estimasi π
+
+Thread Pekerja (generate_points)
+
+- Membuat titik-titik acak di dalam area persegi
+
+- Menghitung titik yang jatuh di dalam lingkaran (x² + y² ≤ r²)
+
+- Menyimpan hasil di variabel global points_in_circle
+
+---
+
+• 4.25
+
+Repeat Exercise 4.24, but instead of using a separate thread to generate random points, use OpenMP to parallelize the generation of points. Be careful not to place the calculation of π in the parallel region, since you want to calculate π only once.
+
+Jawaban :
+
+Program Monte Carlo dengan OpenMP
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <omp.h>
+    #include <math.h>
+    
+    #define RADIUS (1.0/3.0)
+    
+    int main(int argc, char *argv[]) {
+        if (argc != 2) {
+            printf("Penggunaan: %s <jumlah_titik>\n", argv[0]);
+            return 1;
+        }
+    
+        int total_points = atoi(argv[1]);
+        int points_in_circle = 0;
+    
+        #pragma omp parallel for reduction(+:points_in_circle)
+        for (int i = 0; i < total_points; i++) {
+            double x = (double)rand() / RAND_MAX * 2 * RADIUS - RADIUS;
+            double y = (double)rand() / RAND_MAX * 2 * RADIUS - RADIUS;
+            if (x*x + y*y <= RADIUS*RADIUS) {
+                points_in_circle++;
+            }
+        }
+    
+        double pi_estimate = 6.0 * points_in_circle / total_points;
+        printf("Estimasi π = %f\n", pi_estimate);
+    
+        return 0;
+    }
+
+Penjelasan :
+
+- #pragma omp parallel for membagi loop ke beberapa thread.
+
+- reduction(+:points_in_circle) menggabungkan hasil dari semua thread.
+
+- Kompilasi: gcc -fopenmp monte_carlo_omp.c -o monte_carlo_omp
+
+---
+
+• 4.26
+
+Modify the socket-based date server (Figure 3.27) in Chapter 3 so that the server services each client request in a separate thread.
+
+Jawaban :
+
+Program Server Tanggal Multithread
+
+    #include <stdio.h>
+    #include <stdlib.h>
+    #include <pthread.h>
+    #include <unistd.h>
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <time.h>
+    
+    void *handle_client(void *arg) {
+        int client_socket = *((int *)arg);
+        time_t rawtime;
+        time(&rawtime);
+        char *response = ctime(&rawtime);
+        send(client_socket, response, strlen(response), 0);
+        close(client_socket);
+        pthread_exit(NULL);
+    }
+    
+    int main() {
+        int server_socket = socket(AF_INET, SOCK_STREAM, 0);
+        struct sockaddr_in server_addr = {
+            .sin_family = AF_INET,
+            .sin_port = htons(8080),
+            .sin_addr.s_addr = INADDR_ANY
+        };
+    
+        bind(server_socket, (struct sockaddr *)&server_addr, sizeof(server_addr));
+        listen(server_socket, 5);
+    
+        while (1) {
+            int client_socket = accept(server_socket, NULL, NULL);
+            pthread_t thread;
+            pthread_create(&thread, NULL, handle_client, &client_socket);
+            pthread_detach(thread); // Agar thread cleanup otomatis
+        }
+    
+        return 0;
+    }
+
+Penjelasan :
+
+- Setiap koneksi klien ditangani oleh thread baru.
+
+- pthread_detach mencegah memory leak.
+
+- Kompilasi: gcc server.c -o server -lpthread
+
+---
+
+• 4.27
+
+The Fibonacci sequence is the series of numbers 0,1,1,2,3,5,8,... Formally, it can be expressed as:
+
