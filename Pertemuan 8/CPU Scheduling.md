@@ -1,5 +1,23 @@
+# LAPORAN LATIHAN SISTEM OPERASI
 
-# CPU Scheduling Problems and Solutions
+<img src="pngegg.png" width="240">
+
+
+## DOSEN PENGAMPU
+Dr. Ferry Astika Saputra, ST, M.Sc
+
+## NAMA PEMBUAT
+MUCHAMMAD HAWWIN ROMADHON
+
+KELAS : IT A
+
+NRP : 3124521003
+
+POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
+
+---
+
+# CPU Scheduling 
 
 ## Soal 5.17
 
@@ -127,3 +145,7 @@ Rumus: `Waiting Time = Turnaround Time - Burst Time`
 | P₄      | 85         | 20    | 65      |
 | P₅      | 5          | 5     | 0       |
 | P₆      | 15         | 15    | 0       |
+
+---
+
+SELESAI
