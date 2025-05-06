@@ -1,27 +1,9 @@
-# LAPORAN LATIHAN SISTEM OPERASI
 
-<img src="pngegg.png" width="240">
-
-
-## DOSEN PENGAMPU
-Dr. Ferry Astika Saputra, ST, M.Sc
-
-## NAMA PEMBUAT
-MUCHAMMAD HAWWIN ROMADHON
-
-KELAS : IT A
-
-NRP : 3124521003
-
-POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
-
----
-
-# CPU Scheduling
+# CPU Scheduling Problems and Solutions
 
 ## Soal 5.17
 
-Consider the following set of processes, with the length of the CPU burst given in milliseconds:
+Diberikan proses sebagai berikut:
 
 | Process | Burst Time | Priority |
 |---------|------------|----------|
@@ -31,25 +13,82 @@ Consider the following set of processes, with the length of the CPU burst given 
 | P₄      | 7          | 2        |
 | P₅      | 4          | 3        |
 
-The processes are assumed to have arrived in the order P₁, P₂, P₃, P₄, P₅, all at time 0.
+### a. Gantt Chart untuk Setiap Algoritma
 
-A. Draw four Gantt charts that illustrate the execution of these processes using the following scheduling algorithms:
-- FCFS
-- SJF
-- Non-preemptive Priority (a larger priority number implies a higher priority)
-- Round Robin (quantum = 2)
+#### FCFS (First Come First Serve)
 
-B. What is the turnaround time of each process for each of the scheduling algorithms in part a?
+Semua proses datang di waktu 0.
 
-C. What is the waiting time of each process for each of these scheduling algorithms?
+```
+| P₁ | P₂ | P₃ | P₄ | P₅ |
+0    5    8   9   16   20
+```
 
-D. Which of the algorithms results in the minimum average waiting time (over all processes)?
+#### SJF (Shortest Job First)
+
+Urutan burst: P₃(1), P₂(3), P₅(4), P₁(5), P₄(7)
+
+```
+| P₃ | P₂ | P₅ | P₁ | P₄ |
+0    1    4    8   13   20
+```
+
+#### Non-Preemptive Priority (semakin besar = prioritas lebih tinggi)
+
+Urutan: P₁(4), P₅(3), P₃(2), P₄(2), P₂(1)
+
+```
+| P₁ | P₅ | P₃ | P₄ | P₂ |
+0    5    9   10  17   20
+```
+
+#### Round Robin (Quantum = 2)
+
+Proses berputar per 2 ms.
+
+```
+| P₁ | P₂ | P₃ | P₄ | P₅ | P₁ | P₄ | P₅ | P₁ | P₄ | P₄ |
+0    2    4    5    7    9   11   13  15  16   18  20
+```
+
+### b. Turnaround Time (TAT)
+
+Rumus: `TAT = Completion Time - Arrival Time`
+
+| Proses | FCFS | SJF | Priority | RR |
+|--------|------|-----|----------|----|
+| P₁     | 5    | 13  | 5        | 15 |
+| P₂     | 8    | 4   | 20       | 4  |
+| P₃     | 9    | 1   | 10       | 5  |
+| P₄     | 16   | 20  | 17       | 20 |
+| P₅     | 20   | 8   | 9        | 13 |
+
+### c. Waiting Time
+
+Rumus: `Waiting Time = Turnaround Time - Burst Time`
+
+| Proses | FCFS | SJF | Priority | RR |
+|--------|------|-----|----------|----|
+| P₁     | 0    | 8   | 0        | 10 |
+| P₂     | 5    | 1   | 17       | 1  |
+| P₃     | 8    | 0   | 9        | 4  |
+| P₄     | 9    | 13  | 10       | 13 |
+| P₅     | 16   | 4   | 5        | 9  |
+
+### d. Rata-rata Waiting Time
+
+| Algoritma | Avg Waiting Time |
+|-----------|------------------|
+| FCFS      | (0+5+8+9+16)/5 = 7.6 |
+| SJF       | (8+1+0+13+4)/5 = 5.2 |
+| Priority  | (0+17+9+10+5)/5 = 8.2 |
+| RR (q=2)  | (10+1+4+13+9)/5 = 7.4 |
+
+**Minimum average waiting time: SJF**
 
 ---
 
 ## Soal 5.18
-
-The following processes are being scheduled using a preemptive, priority-based, round-robin scheduling algorithm.
 
 | Process | Priority | Burst | Arrival |
 |---------|----------|-------|---------|
@@ -60,10 +99,31 @@ The following processes are being scheduled using a preemptive, priority-based, 
 | P₅      | 5        | 5     | 45      |
 | P₆      | 5        | 15    | 55      |
 
-Each process is assigned a numerical priority, with a higher number indicating a higher relative priority. The scheduler will execute the highest-priority process first. For processes with the same priority, a round-robin scheduler will be used with a time quantum of 10 units. If a process is preempted by a higher-priority process, the preempted process is placed at the end of the queue.
+### a. Gantt Chart (Priority Preemptive + RR for same priority, q=10)
 
-A. Show the scheduling order of the processes using a Gantt chart.
+```
+| P₁ | P₂ | P₁ | idle | P₅ | idle | P₆ | P₃ | P₄ |
+0    10   20   25     45   50    55   70   90   110
+```
 
-B. What is the turnaround time for each process?
+### b. Turnaround Time
 
-C. What is the waiting time for each process?
+| Process | Arrival | Completion | Turnaround |
+|---------|---------|------------|------------|
+| P₁      | 0       | 25         | 25         |
+| P₂      | 0       | 20         | 20         |
+| P₃      | 20      | 90         | 70         |
+| P₄      | 25      | 110        | 85         |
+| P₅      | 45      | 50         | 5          |
+| P₆      | 55      | 70         | 15         |
+
+### c. Waiting Time
+
+| Process | Turnaround | Burst | Waiting |
+|---------|------------|-------|---------|
+| P₁      | 25         | 15    | 10      |
+| P₂      | 20         | 20    | 0       |
+| P₃      | 70         | 20    | 50      |
+| P₄      | 85         | 20    | 65      |
+| P₅      | 5          | 5     | 0       |
+| P₆      | 15         | 15    | 0       |
