@@ -23,7 +23,6 @@ POLITEKNIK ELEKTRONIKA NEGERI SURABAYA PSDKU LAMONGAN
 
 ### 1. SJF (Shortest Job First) Without Arrival Time
 
-**Definisi:**
 SJF tanpa arrival time berarti semua proses dianggap datang bersamaan (misalnya pada waktu 0). Algoritma akan mengeksekusi proses dengan burst time (waktu eksekusi CPU) terpendek lebih dahulu.
 
 **Contoh Kasus (Practice Exercise 5.3):**
@@ -64,7 +63,6 @@ P4       3
 
 ### 2. SJF With Arrival Time (Non-Preemptive)
 
-**Definisi:**
 SJF mempertimbangkan waktu kedatangan. Proses dengan burst time terkecil **di antara proses yang sudah tiba** yang akan diproses dulu.
 
 **Contoh Kasus (Practice Exercise 5.4):**
@@ -105,7 +103,6 @@ P4       3             5
 
 ### 3. SRTF (Shortest Remaining Time First - Preemptive SJF)
 
-**Definisi:**
 Versi preemptive dari SJF. Jika proses baru datang dan memiliki burst time lebih pendek dari sisa waktu proses yang sedang berjalan, maka proses baru akan **menghentikan** proses sebelumnya.
 
 **Contoh Kasus (Practice Exercise 5.6):**
